@@ -77,7 +77,7 @@ export async function etsyFetch(
     ...options,
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "x-api-key": process.env.ETSY_SHARED_SECRET!,
+      "x-api-key": `${process.env.ETSY_API_KEY!}:${process.env.ETSY_SHARED_SECRET!}`,
       "Content-Type": "application/json",
       ...options.headers,
     },

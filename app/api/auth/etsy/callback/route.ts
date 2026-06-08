@@ -18,13 +18,24 @@ export async function GET(req: NextRequest) {
 
   const tokens = await exchangeCodeForToken(code, verifier);
 
+  // The access_token has the user_id as a numeric prefix: "12345678.tokenstring"
+  // Extract it directly — no extra API call needed.
   let user_id: number | undefined;
+  const tokenPrefix = tokens.access_token?.split(".")[0];
+  if (tokenPrefix && /^\d+$/.test(tokenPrefix)) {
+    user_id = parseInt(tokenPrefix, 10);
+    console.log("[etsy-callback] user_id from token:", user_id);
+  }
+
   let shop_id: number | undefined;
   try {
-    const me = await getMe(tokens.access_token);
-    user_id = me.user_id;
-    console.log("[etsy-callback] user_id:", user_id);
-    const shop = await getShopByOwner(me.user_id, tokens.access_token);
+    if (!user_id) {
+      // Fallback: call getMe if we couldn't parse user_id from token
+      const me = await getMe(tokens.access_token);
+      user_id = me.user_id;
+      console.log("[etsy-callback] user_id from getMe:", user_id);
+    }
+    const shop = await getShopByOwner(user_id!, tokens.access_token);
     shop_id = shop.shop_id;
     console.log("[etsy-callback] shop_id:", shop_id);
   } catch (e: any) {
