@@ -1,0 +1,26 @@
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { exchangeCodeForToken } from "@/lib/etsy";
+import { saveTokens } from "@/lib/supabase";
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+
+  const cookieStore = await cookies();
+  const verifier = cookieStore.get("etsy_pkce_verifier")?.value;
+  const savedState = cookieStore.get("etsy_oauth_state")?.value;
+
+  if (!code || !verifier || state !== savedState) {
+    return NextResponse.redirect(new URL("/?error=auth_failed", req.url));
+  }
+
+  const tokens = await exchangeCodeForToken(code, verifier);
+  await saveTokens(tokens);
+
+  cookieStore.delete("etsy_pkce_verifier");
+  cookieStore.delete("etsy_oauth_state");
+
+  return NextResponse.redirect(new URL("/dashboard", req.url));
+}
