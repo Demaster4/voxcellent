@@ -22,11 +22,11 @@ export async function GET(req: NextRequest) {
   let shop_id: number | undefined;
   try {
     const me = await getMe(tokens.access_token);
-    console.log("[etsy-callback] getMe response:", JSON.stringify(me));
     user_id = me.user_id;
+    console.log("[etsy-callback] user_id:", user_id);
     const shop = await getShopByOwner(me.user_id, tokens.access_token);
-    console.log("[etsy-callback] getShopByOwner response:", JSON.stringify(shop));
     shop_id = shop.shop_id;
+    console.log("[etsy-callback] shop_id:", shop_id);
   } catch (e: any) {
     console.error("[etsy-callback] error fetching user/shop:", e.message);
   }
