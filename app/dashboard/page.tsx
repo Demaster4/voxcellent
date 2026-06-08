@@ -10,7 +10,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold tracking-tight">Voxly</span>
+        <span className="text-xl font-bold tracking-tight">Voxcellent</span>
         <nav className="flex gap-6">
           {nav.map(({ href, label }) => (
             <Link key={href} href={href} className="text-zinc-400 hover:text-white transition-colors text-sm">
