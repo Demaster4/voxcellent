@@ -85,3 +85,32 @@ export async function etsyFetch(
   if (!res.ok) throw new Error(`Etsy API error ${res.status}: ${await res.text()}`);
   return res.json();
 }
+
+export async function getMe(accessToken: string) {
+  return etsyFetch("/v3/application/users/me", accessToken);
+}
+
+export async function getShopByOwner(userId: number, accessToken: string) {
+  return etsyFetch(`/v3/application/users/${userId}/shops`, accessToken);
+}
+
+export async function getShop(shopId: number, accessToken: string) {
+  return etsyFetch(`/v3/application/shops/${shopId}`, accessToken);
+}
+
+export async function getReceipts(shopId: number, accessToken: string, params: Record<string, string> = {}) {
+  const qs = new URLSearchParams({ limit: "25", sort_on: "created", sort_order: "down", ...params });
+  return etsyFetch(`/v3/application/shops/${shopId}/receipts?${qs}`, accessToken);
+}
+
+export async function getListings(shopId: number, accessToken: string, params: Record<string, string> = {}) {
+  const qs = new URLSearchParams({ limit: "25", state: "active", ...params });
+  return etsyFetch(`/v3/application/shops/${shopId}/listings?${qs}`, accessToken);
+}
+
+export function formatMoney(money: { amount: number; divisor: number; currency_code: string }) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: money.currency_code,
+  }).format(money.amount / money.divisor);
+}

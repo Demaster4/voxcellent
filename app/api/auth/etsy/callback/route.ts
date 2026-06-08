@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { exchangeCodeForToken } from "@/lib/etsy";
+import { exchangeCodeForToken, getMe, getShopByOwner } from "@/lib/etsy";
 import { saveTokens } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
@@ -17,7 +17,17 @@ export async function GET(req: NextRequest) {
   }
 
   const tokens = await exchangeCodeForToken(code, verifier);
-  await saveTokens(tokens);
+
+  let user_id: number | undefined;
+  let shop_id: number | undefined;
+  try {
+    const me = await getMe(tokens.access_token);
+    user_id = me.user_id;
+    const shop = await getShopByOwner(me.user_id, tokens.access_token);
+    shop_id = shop.shop_id;
+  } catch {}
+
+  await saveTokens({ ...tokens, user_id, shop_id });
 
   cookieStore.delete("etsy_pkce_verifier");
   cookieStore.delete("etsy_oauth_state");
