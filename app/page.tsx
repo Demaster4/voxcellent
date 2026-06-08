@@ -76,12 +76,12 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex items-center gap-6">
-                <Link
+                <a
                   href="/api/auth/etsy"
                   className="bg-orange-500 hover:bg-orange-400 text-white font-semibold px-8 py-3.5 rounded-lg transition-colors"
                 >
                   Connect Etsy Store
-                </Link>
+                </a>
                 <Link
                   href="/dashboard"
                   className="text-zinc-400 hover:text-white text-sm transition-colors"
