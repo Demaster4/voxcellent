@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-const ETSY_BASE_URL = "https://openapi.etsy.com/v3";
+const ETSY_BASE_URL = "https://openapi.etsy.com";
 const ETSY_AUTH_URL = "https://www.etsy.com/oauth/connect";
 const ETSY_TOKEN_URL = "https://api.etsy.com/v3/public/oauth/token";
 
